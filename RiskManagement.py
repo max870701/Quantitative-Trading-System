@@ -23,9 +23,12 @@ def monte_carlo_var(returns, confidence_level, simulations):
     return var
 
 def parametric_volatility_var(returns, confidence_level):
-    # Calculate the mean and standard deviation of the returns
-    mean = np.mean(returns)
-    stddev = np.std(returns)
+    # Calculate the mean and standard deviation of the returns using EWMA
+    mean = returns[0]
+    stddev = 0
+    for i in range(1, len(returns)):
+        mean = decay_factor * mean + (1 - decay_factor) * returns[i]
+        stddev = np.sqrt(decay_factor * stddev**2 + (1 - decay_factor) * (returns[i] - mean)**2)
 
     # Calculate the z-score for the confidence level
     z_score = norm.ppf(confidence_level)
